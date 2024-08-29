@@ -1,14 +1,14 @@
 <script setup>
-import ApplicationLogo from '@/Components/ApplicationLogo.vue';
 import { Link } from '@inertiajs/vue3';
+import { FwbNavbarLogo } from 'flowbite-vue';
 </script>
 
 <template>
     <div class="min-h-screen flex flex-col sm:justify-center items-center pt-6 sm:pt-0 bg-gray-100">
         <div>
-            <Link href="/">
-                <ApplicationLogo class="w-20 h-20 fill-current text-gray-500" />
-            </Link>
+            <fwb-navbar-logo alt="Flowbite logo" image-url="https://www.svgrepo.com/show/414688/contractor-builder-15.svg" link="#" class="flex flex-col gap-3">
+                ABC Construction
+            </fwb-navbar-logo>
         </div>
 
         <div
