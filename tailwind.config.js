@@ -21,7 +21,10 @@ export default {
             },
             textColor: {
                 'active-link': '#968172',
-                'background': '#f6f2f0',
+            },
+            backgroundColor: {
+                'primary': '#f6f2f0',
+                'highlight': '#e3d5ca'
             }
         },
     },

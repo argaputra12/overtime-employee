@@ -11,7 +11,6 @@ defineProps({
     isActive: Boolean,
 });
 
-
 </script>
 
 <template>

@@ -6,9 +6,18 @@ import PrimaryButton from '@/Components/PrimaryButton.vue';
 import TextInput from '@/Components/TextInput.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
 
+defineProps({
+    departments: {
+        type: Object,
+        default: () => ({}),
+    },
+});
+
 const form = useForm({
     name: '',
     email: '',
+    department_id: '',
+    position: '',
     password: '',
     password_confirmation: '',
 });
@@ -40,7 +49,28 @@ const submit = () => {
 
                 <InputError class="mt-2" :message="form.errors.name" />
             </div>
+            <div class="mt-4">
+                <InputLabel for="department_id" value="Department" />
+                <select id="department_id" v-model="form.department_id" name="department_id" class="mt-1 block w-full rounded-md border-gray-300">
+                    <option v-for="department in departments" :key="department.id" :value="department.id">{{ department.name }}</option>
+                </select>
 
+                <InputError class="mt-2" :message="form.errors.department_id" />
+            </div>
+            <div class="mt-4">
+                <InputLabel for="position" value="Position" />
+
+                <TextInput
+                    id="position"
+                    type="text"
+                    class="mt-1 block w-full"
+                    v-model="form.position"
+                    required
+                    autocomplete="position"
+                />
+
+                <InputError class="mt-2" :message="form.errors.position" />
+            </div>
             <div class="mt-4">
                 <InputLabel for="email" value="Email" />
 
