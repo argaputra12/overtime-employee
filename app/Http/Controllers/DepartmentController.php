@@ -62,4 +62,11 @@ class DepartmentController extends Controller
     {
         //
     }
+
+    public function get()
+    {
+        $departments = Department::select('id as value', 'name')->get();
+
+        return response()->json($departments);
+    }
 }

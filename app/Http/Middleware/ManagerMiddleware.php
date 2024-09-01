@@ -3,6 +3,9 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Inertia\Inertia;
+use App\Models\Manager;
+use App\Models\Employee;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Symfony\Component\HttpFoundation\Response;
@@ -16,11 +19,20 @@ class ManagerMiddleware
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(Auth::user()->manager) {
+
+        $user = Auth::user();
+        if(Manager::where('user_id', $user->id)->exists()) {
             return $next($request);
         }
-        if(Auth::user()->employee) {
-            return redirect()->route('dashboard');
+        if (Employee::where('user_id', $user->id)->exists()) {
+            $toastList = [
+                [
+                    'type' => 'danger',
+                    'message' => 'You are not allowed to access manager dashboard'
+                ]
+            ];
+
+            return redirect()->route('dashboard')->with('ToastList', $toastList);
         }
     }
 }

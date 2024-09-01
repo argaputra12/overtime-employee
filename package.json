@@ -24,6 +24,8 @@
         "@fortawesome/free-solid-svg-icons": "^6.6.0",
         "@fortawesome/vue-fontawesome": "^3.0.8",
         "flowbite": "^2.5.1",
-        "flowbite-vue": "^0.1.6"
+        "flowbite-vue": "^0.1.6",
+        "vue-router": "^4.4.3",
+        "vue-toast-notification": "^3.1.2"
     }
 }

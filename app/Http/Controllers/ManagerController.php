@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Inertia\Inertia;
 use App\Models\Manager;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
 
 class ManagerController extends Controller
 {
@@ -12,7 +14,15 @@ class ManagerController extends Controller
      */
     public function index()
     {
-        //
+        $managers = Manager::select('managers.id', 'users.name', 'users.phone_number', 'users.address', 'departments.name as department_name')
+            ->join('users', 'users.id', '=', 'managers.user_id')
+            ->join('departments', 'departments.id', '=', 'managers.department_id')
+            ->orderBy('managers.created_at', 'desc')
+            ->paginate(10);
+
+        return Inertia::render('Manager/Managers/Index', [
+            'managers' => $managers
+        ]);
     }
 
     /**

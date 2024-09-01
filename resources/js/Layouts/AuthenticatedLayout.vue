@@ -2,8 +2,7 @@
 import { ref } from 'vue';
 import { Link } from '@inertiajs/vue3';
 import Navbar from '@/Components/Navbar.vue';
-
-const showingNavigationDropdown = ref(false);
+import Sidebar from '@/Components/Sidebar.vue';
 
 defineProps({
     canLogin: Boolean,
@@ -14,7 +13,9 @@ defineProps({
 </script>
 
 <template>
-    <Navbar :can-login="canLogin" :can-register="canRegister" :is-active="isActive"/>
-
+    <div>
+        <Navbar :can-login="canLogin" :can-register="canRegister" :is-active="isActive" class="z-100"/>
+        <slot />
+    </div>
 </template>
 
