@@ -61,34 +61,6 @@ const logout = () => {
             </fwb-navbar-collapse>
         </template>
         <template #default="{ isShowMenu }" class="flex w-full justify-between items-center">
-            <fwb-navbar-collapse v-if="!route().current().startsWith('/manager')" :is-show-menu="isShowMenu">
-                <fwb-a :link="route('dashboard')" :is-active="route().current('dashboard')"
-                    class="text-[#968172] hover:no-underline">
-                    Dashboard
-                </fwb-a>
-                <fwb-dropdown transition="fade"
-                    class="hover:text-active-link hover:no-underline transition-all duraion-200 cursor-pointer">
-                    <template #trigger
-                        :is-active="route().current('overtime-request') || route().current('overtime-approval')"
-                        class="hover:text-active-link hover:no-underline transition-all duraion-200">
-                        <span
-                            class="hover:text-active-link hover:no-underline transition-all duraion-200">Overtime</span>
-                    </template>
-                    <fwb-list-group>
-                        <fwb-list-group-item :link="{ name: 'overtime-request' }"
-                            :is-active="route().current('overtime-request')"
-                            class="hover:bg-highlight transition-all duration-300">
-                            Overtime Request
-                        </fwb-list-group-item>
-
-                        <fwb-list-group-item :link="{ name: 'overtime-approval' }"
-                            :is-active="route().current('overtime-approval')"
-                            class="hover:bg-highlight transition-all duration-300 ">
-                            Overtime Approval
-                        </fwb-list-group-item>
-                    </fwb-list-group>
-                </fwb-dropdown>
-            </fwb-navbar-collapse>
             <fwb-navbar-collapse :is-show-menu="isShowMenu">
                 <fwb-dropdown transition="fade"
                     class="hover:text-active-link hover:no-underline transition-all duraion-200 cursor-pointer">

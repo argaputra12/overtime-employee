@@ -26,6 +26,9 @@ export default {
                 'primary': '#f6f2f0',
                 'highlight': '#e3d5ca',
                 'primary-dark': '#ddb892'
+            },
+            colors: {
+                'border-gray': '#eeeae6',
             }
         },
     },

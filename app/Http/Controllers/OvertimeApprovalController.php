@@ -72,8 +72,11 @@ class OvertimeApprovalController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(OvertimeApproval $overtimeApproval)
+    public function destroy($id)
     {
-        //
+        $overtimeApproval = OvertimeApproval::find($id);
+        $overtimeApproval->delete();
+
+        return response()->json(['success' => 'Overtime approval deleted successfully'], 200);
     }
 }

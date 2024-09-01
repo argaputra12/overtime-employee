@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DashboardController;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Foundation\Application;
@@ -18,9 +19,7 @@ Route::get('/', function () {
     ]);
 });
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+Route::get('/dashboard', [DashboardController::class, 'index'])->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::group(['prefix' => 'manager', 'middleware' => 'manager'], function () {
     Route::get('/dashboard', function () {
@@ -41,10 +40,14 @@ Route::group(['prefix' => 'manager', 'middleware' => 'manager'], function () {
 
     Route::prefix('/overtime_requests')->name('manager.overtime_requests.')->group(function () {
         Route::get('/', [OvertimeRequestController::class, 'index'])->name('index');
+        Route::post('/store', [OvertimeRequestController::class, 'store'])->name('store');
+        // Route::delete('/destroy/{id}', [OvertimeRequestController::class, 'destroy'])->name('destroy');
     });
 
     Route::prefix('/overtime_approvals')->name('manager.overtime_approvals.')->group(function () {
         Route::get('/', [OvertimeApprovalController::class, 'index'])->name('index');
+        Route::post('/store', [OvertimeApprovalController::class, 'store'])->name('store');
+        // Route::delete('/destroy/{id}', [OvertimeApprovalController::class, 'destroy'])->name('destroy');
     });
 });
 
