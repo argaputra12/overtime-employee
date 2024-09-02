@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use Carbon\Carbon;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Barryvdh\DomPDF\Facade\Pdf;
 use App\Models\OvertimeApproval;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -16,7 +18,7 @@ class OvertimeApprovalController extends Controller
     public function index()
     {
         $manager = Auth::user()->manager->id;
-        $overtime_approvals = OvertimeApproval::select('overtime_approvals.status', 'users.name as employee_name', 'overtime_requests.date', 'overtime_requests.start_time', 'overtime_requests.end_time', 'overtime_requests.reason', 'overtime_requests.duration')
+        $overtime_approvals = OvertimeApproval::select('overtime_approvals.status', 'users.name as employee_name', 'overtime_requests.date', 'overtime_requests.start_time', 'overtime_approvals.id as id', 'overtime_requests.end_time', 'overtime_requests.reason', 'overtime_requests.duration')
             ->join('overtime_requests', 'overtime_requests.id', '=', 'overtime_approvals.overtime_request_id')
             ->join('employees', 'employees.id', '=', 'overtime_requests.employee_id')
             ->join('users', 'users.id', '=', 'employees.user_id')
@@ -48,9 +50,28 @@ class OvertimeApprovalController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(OvertimeApproval $overtimeApproval)
+    public function show($id)
     {
-        //
+        $overtime_approval = OvertimeApproval::find($id);
+        $manager_signature = $overtime_approval->manager->user->signature;
+        if ($manager_signature == null) {
+            return back()->with('error', 'Manager belum mengupload tanda tangan');
+        }
+        $employee_signature = $overtime_approval->overtime_request->employee->user->signature;
+        if ($employee_signature == null) {
+            return back()->with('error', 'Pegawai belum mengupload tanda tangan');
+        }
+
+        $date = Carbon::now()->locale('id_ID');
+        $today = Carbon::now()->locale('id_ID')->translatedFormat('l j F Y');
+
+        // Change date format using Carbon's translatedFormat method
+        $overtime_approval->overtime_request->date = Carbon::parse($overtime_approval->overtime_request->date)->locale('id_ID')->translatedFormat('l, j F Y');
+
+        $pdf = app('dompdf.wrapper');
+        $pdf->getDomPDF()->set_option("enable_php", true);
+        $pdf->loadView('pdf.approval', compact('overtime_approval', 'today', 'manager_signature', 'employee_signature'));
+        return $pdf->download('Surat Perintah Lembur - '. $overtime_approval->overtime_request->employee->user->name . ' - ' . (string)$overtime_approval->id . '.pdf');
     }
 
     /**
@@ -79,4 +100,28 @@ class OvertimeApprovalController extends Controller
 
         return response()->json(['success' => 'Overtime approval deleted successfully'], 200);
     }
+
+    public function approve($id)
+    {
+        $overtimeApproval = OvertimeApproval::find($id);
+
+        $overtimeApproval->update([
+            'status' => 'approved',
+            'approved_at' => now()
+        ]);
+
+        return response()->json(['success' => 'Overtime approval approved successfully'], 200);
+    }
+
+    public function reject($id)
+    {
+        $overtimeApproval = OvertimeApproval::find($id);
+
+        $overtimeApproval->update([
+            'status' => 'rejected',
+        ]);
+
+        return response()->json(['success' => 'Overtime approval rejected successfully'], 200);
+    }
+
 }

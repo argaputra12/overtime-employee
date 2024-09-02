@@ -27,9 +27,6 @@
                             manager.department_name
                         }}</fwb-table-cell>
                         <fwb-table-cell>{{ manager.position }}</fwb-table-cell>
-                        <fwb-table-cell>
-                            <fwb-a href="#"> Edit </fwb-a>
-                        </fwb-table-cell>
                     </fwb-table-row>
                 </fwb-table-body>
             </fwb-table>

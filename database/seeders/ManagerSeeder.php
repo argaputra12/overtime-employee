@@ -23,7 +23,8 @@ class ManagerSeeder extends Seeder
         ]);
 
         Manager::factory()->create([
-            'user_id' => $manager->id
+            'user_id' => $manager->id,
+            'department_id' => 1
         ]);
     }
 }

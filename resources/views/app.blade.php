@@ -13,7 +13,7 @@
         <!-- csrf token -->
         {{-- <meta name="csrf-token" content="{{ csrf_token() }}"> --}}
 
-        <!-- Scripts -->
+    <!-- Scripts -->
         @routes
         @vite(['resources/js/app.js', "resources/js/Pages/{$page['component']}.vue"])
         @inertiaHead
@@ -22,3 +22,8 @@
         @inertia
     </body>
 </html>
+<script>
+    window.appConfig = {
+        baseUrl: "{{ asset('') }}"
+    };
+</script>

@@ -24,7 +24,8 @@ class EmployeeSeeder extends Seeder
         ]);
 
         Employee::factory()->create([
-            'user_id' => $employee->id
+            'user_id' => $employee->id,
+            'department_id' => 1
         ]);
     }
 }

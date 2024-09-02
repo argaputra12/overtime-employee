@@ -24,9 +24,9 @@ const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 const routes = [
     { path: '/manager/dashboard', component: () => import('./Pages/Manager/Dashboard.vue') },
     { path: '/manager/employees/', component: () => import('./Pages/Manager/Employees/Index.vue') },
-    // { path: '/manager/employees/create', component: () => import('./Pages/Manager/Employees/Create.vue') },
     { path: '/manager/managers/', component: () => import('./Pages/Manager/Managers/Index.vue') },
     { path: '/manager/overtime_requests/', component: () => import('./Pages/Manager/OvertimeRequests/Index.vue') },
+    { path: '/manager/overtime_requests/update/:id/:status' },
     { path: '/manager/overtime_approvals/', component: () => import('./Pages/Manager/OvertimeApprovals/Index.vue') },
 ];
 

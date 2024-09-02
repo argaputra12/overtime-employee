@@ -2,13 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
+use Inertia\Inertia;
+use App\Models\Manager;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\OvertimeRequest;
 use App\Models\OvertimeApproval;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
-use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
@@ -32,6 +34,52 @@ class DashboardController extends Controller
             'overtime_requests' => $overtime_requests,
             'overtime_approvals' => $overtime_approvals
         ]);
+    }
+
+    public function manager()
+    {
+        $manager = Manager::where('user_id', Auth::user()->id)->first();
+
+        return Inertia::render('Manager/Dashboard',
+        [
+            'user' => Auth::user(),
+            'manager' => $manager
+        ]);
+    }
+
+    public function storeManager(Request $request)
+    {
+        $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'email' => ['required', 'string', 'email', 'max:255'],
+            'phone_number' => ['required', 'string'],
+            'address' => ['required', 'string'],
+        ]);
+
+        if($request->hasFile('signature')) {
+            $fileExtension = $request->file('signature')->getClientOriginalExtension();
+            $path = $request->file('signature')->storeAs(
+                'public/signature',
+                $request->name.'_'.$request->user_id.'.'.$fileExtension
+            );
+            $path = str_replace('public/', 'storage/', $path);
+
+            User::where('id', $request->user_id)->update([
+                'signature' => $path
+            ]);
+        } else {
+            return response()->json(['error' => "File gambar tidak terdeteksi"]);
+        }
+
+        User::where('id', $request->user_id)->update([
+            'name' => $request->name,
+            'email' => $request->email,
+            'phone_number' => $request->phone_number,
+            'address' => $request->address
+        ]);
+
+
+        return response()->json(['success' => 'Data anda berhasil diperbarui']);
     }
 
     /**

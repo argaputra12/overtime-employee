@@ -9,7 +9,7 @@
         </template>
 
         <div class="p-12">
-            <div class="flex flex-col sm:flex-row justify-between gap-4">
+            <div class="flex flex-col sm:flex-row justify-center gap-4">
                 <div class="rounded-xl p-4 flex flex-col gap-4 items-center">
                     <h1 class="font-semibold">Permintaan Lembur Anda</h1>
                     <fwb-table>
@@ -104,16 +104,36 @@
                                     overtime_approval.approved_at
                                 }}</fwb-table-cell>
                                 <fwb-table-cell>
-                                    <button
-                                        class="hover:cursor-pointer"
-                                        @click="
-                                            deleteOvertimeApproval(
-                                                overtime_approval.id
-                                            )
-                                        "
-                                    >
-                                        <font-awesome-icon icon="trash" />
-                                    </button>
+                                    <div class="flex gap-2">
+                                        <form
+                                            :action="
+                                                route(
+                                                    'overtime_approval.show',
+                                                    overtime_approval.id
+                                                )
+                                            "
+                                            method="get"
+                                        >
+                                            <button
+                                                class="hover:cursor-pointer"
+                                                type="submit"
+                                            >
+                                                <font-awesome-icon
+                                                    icon="file"
+                                                />
+                                            </button>
+                                        </form>
+                                        <button
+                                            class="hover:cursor-pointer"
+                                            @click="
+                                                deleteOvertimeApproval(
+                                                    overtime_approval.id
+                                                )
+                                            "
+                                        >
+                                            <font-awesome-icon icon="trash" />
+                                        </button>
+                                    </div>
                                 </fwb-table-cell>
                             </fwb-table-row>
                         </fwb-table-body>
@@ -196,9 +216,15 @@
                         <fwb-button @click="closeModal" color="alternative">
                             Close
                         </fwb-button>
-                        <fwb-button type="submit" color="green">
-                            Submit
-                        </fwb-button>
+
+                        <div class="flex justify-end gap-3">
+                            <fwb-a :href="route('profile.edit')" class="hover:cursor-pointer font-light text-sm text-blue-600">
+                                Upload tanda tangan
+                            </fwb-a>
+                            <fwb-button type="submit" color="green">
+                                Submit
+                            </fwb-button>
+                        </div>
                     </div>
                 </template>
             </fwb-modal>
@@ -209,7 +235,7 @@
 
 <script setup>
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head, usePage } from "@inertiajs/vue3";
+import { Head, usePage, Link, useForm } from "@inertiajs/vue3";
 import { useToast } from "vue-toast-notification";
 import "vue-toast-notification/dist/theme-sugar.css";
 import {
@@ -228,11 +254,11 @@ import { defineProps, ref } from "vue";
 import Pagination from "@/Components/Pagination.vue";
 
 const user = usePage().props.auth.user;
+const error = usePage().props.errors.error;
+
 defineProps({
     canLogin: Boolean,
     canRegister: Boolean,
-    laravelVersion: String,
-    phpVersion: String,
     overtime_requests: Object,
     overtime_approvals: Object,
 });
@@ -263,6 +289,12 @@ function showModal() {
     isShowModal.value = true;
 }
 
+if (error) {
+    $toast.error(error, {
+        position: "top-right",
+    });
+}
+
 async function submitForm() {
     try {
         const response = await axios.post(
@@ -275,10 +307,9 @@ async function submitForm() {
         });
         location.reload();
     } catch (error) {
-        $toast.error(error.response.data.message, {
+        $toast.error(error.response.data.error, {
             position: "top-right",
         });
-        // location.reload();
     }
 }
 

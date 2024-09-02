@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use Inertia\Inertia;
 use App\Models\Employee;
 use Illuminate\Http\Request;
 use App\Models\OvertimeRequest;
+use App\Models\OvertimeApproval;
 use App\Http\Controllers\Controller;
+use App\Models\Manager;
 use Illuminate\Support\Facades\Auth;
 
 class OvertimeRequestController extends Controller
@@ -51,6 +54,12 @@ class OvertimeRequestController extends Controller
             'duration' => ['required'],
             'reason' => ['required'],
         ]);
+
+        $signature = User::where('id', $validated['user_id'])->first()->signature;
+
+        if ($signature == null) {
+            return response()->json(['error' => 'Anda perlu mengupload tanda tangan terlebih dahulu'], 404);
+        }
 
 
         if ($validated) {
@@ -108,5 +117,87 @@ class OvertimeRequestController extends Controller
         $overtime_request->delete();
 
         return response()->json(['success' => 'Overtime request deleted successfully'], 200);
+    }
+
+    public function approve(String $id, Request $request)
+    {
+        $user_id = $request->user_id;
+        $manager_id = Manager::where('user_id', $user_id)->first()->id;
+        $check = OvertimeApproval::where('overtime_request_id', $id)->first();
+
+        if($check) {
+            OvertimeApproval::where('overtime_request_id', $id)->update([
+                'status' => 'approved',
+            ]);
+
+            return response()->json(['success' => 'Overtime request pending successfully'], 200);
+        }
+        $overtime_approval = OvertimeApproval::create([
+            'overtime_request_id' => $id,
+            'status' => 'approved',
+            'manager_id' => $manager_id,
+            'approved_at' => now()
+        ]);
+
+        if (!$overtime_approval) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+
+        return response()->json(['success' => 'Overtime request approved successfully'], 200);
+    }
+
+    public function reject(String $id, Request $request)
+    {
+        $user_id = $request->user_id;
+        $manager_id = Manager::where('user_id', $user_id)->first()->id;
+        $check = OvertimeApproval::where('overtime_request_id', $id)->first();
+
+        if($check) {
+            OvertimeApproval::where('overtime_request_id', $id)->update([
+                'status' => 'rejected',
+            ]);
+
+            return response()->json(['success' => 'Overtime request pending successfully'], 200);
+        }
+        $overtime_approval = OvertimeApproval::create([
+            'overtime_request_id' => $id,
+            'status' => 'rejected',
+            'manager_id' => $manager_id,
+        ]);
+
+        if (!$overtime_approval) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+
+        return response()->json(['success' => 'Overtime request rejected successfully'], 200);
+    }
+
+    public function pending(String $id, Request $request)
+    {
+        $user_id = $request->user_id;
+        $manager_id = Manager::where('user_id', $user_id)->first()->id;
+
+        $check = OvertimeApproval::where('overtime_request_id', $id)->first();
+
+        if($check) {
+            OvertimeApproval::where('overtime_request_id', $id)->update([
+                'status' => 'pending',
+            ]);
+
+            return response()->json(['success' => 'Overtime request pending successfully'], 200);
+        }
+
+        $overtime_approval = OvertimeApproval::create([
+            'overtime_request_id' => $id,
+            'status' => 'pending',
+            'manager_id' => $manager_id
+        ]);
+
+        if(!$overtime_approval) {
+            return response()->json(['error' => 'Something went wrong'], 500);
+        }
+
+        return response()->json(['success' => 'Overtime request pending successfully'], 200);
+
     }
 }
