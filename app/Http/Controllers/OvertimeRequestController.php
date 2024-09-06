@@ -9,6 +9,7 @@ use Illuminate\Http\Request;
 use App\Models\OvertimeRequest;
 use App\Models\OvertimeApproval;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\OvertimeRequest as RequestsOvertimeRequest;
 use App\Models\Manager;
 use Illuminate\Support\Facades\Auth;
 
@@ -44,27 +45,18 @@ class OvertimeRequestController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(RequestsOvertimeRequest $request)
     {
-        $validated = $request->validate([
-            'user_id' => ['required'],
-            'date' => ['required'],
-            'start_time' => ['required'],
-            'end_time' => ['required'],
-            'duration' => ['required'],
-            'reason' => ['required'],
-        ]);
 
-        $signature = User::where('id', $validated['user_id'])->first()->signature;
+        $signature = User::where('id', $request['user_id'])->first()->signature;
 
         if ($signature == null) {
             return response()->json(['error' => 'Anda perlu mengupload tanda tangan terlebih dahulu'], 404);
         }
 
+        if ($request) {
 
-        if ($validated) {
-
-            $employee_id = Employee::where('user_id', $validated['user_id'])->first()->id;
+            $employee_id = Employee::where('user_id', $request['user_id'])->first()->id;
 
             $overtime_request = OvertimeRequest::create([
                 'employee_id' => $employee_id,

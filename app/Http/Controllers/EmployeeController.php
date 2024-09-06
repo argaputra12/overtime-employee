@@ -8,6 +8,7 @@ use App\Models\Employee;
 use App\Models\Department;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\EmployeeRequest;
 
 use function Flasher\Toastr\Prime\toastr;
 use function Laravel\Prompts\error;
@@ -43,7 +44,7 @@ class EmployeeController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(EmployeeRequest $request)
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],

@@ -21,6 +21,16 @@ This application is designed to make it easier for employees to request overtime
 8. Run the command `php artisan serve`
 9. Run the command `npm run dev`
 
+## Library and Package Used
+
+- Laravel 11 as the framework
+- Inertia.js as the frontend framework
+- Vue 3 as the frontend library
+- Flowbite as the UI library
+- FontAwesome as the icon library
+- NPM as the package manager
+- Composer as the package manager
+
 ## Test Account
 
 For testing the application, you can use the following account:
